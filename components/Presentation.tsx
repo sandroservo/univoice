@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from 'react'
+import OfficePowerPointViewer from './OfficePowerPointViewer'
 
 type Slide = { id: string, filePath: string, order: number }
 
@@ -146,89 +147,17 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
   }
 
   function renderSlide(slide: Slide) {
-    // PowerPoint - mostrar informações e opções
+    // PowerPoint - usar componente dedicado com integração Office 365
     if (isPowerPoint(slide.filePath)) {
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-red-50 p-8">
-          <div className="max-w-2xl bg-white rounded-xl shadow-2xl p-8 space-y-6">
-            {/* Ícone e Título */}
-            <div className="text-center">
-              <div className="text-7xl mb-4">📊</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">PowerPoint Detectado</h3>
-              <p className="text-gray-600">
-                Arquivo: <strong>{slide.filePath.split('/').pop()}</strong>
-              </p>
-            </div>
-
-            {/* Informação */}
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900">
-                ℹ️ <strong>Ambiente de Desenvolvimento:</strong> Visualizadores online (Office Online, Google Docs) 
-                não conseguem acessar arquivos em localhost. Para visualizar PowerPoint durante a apresentação, 
-                você precisa convertê-lo para PDF.
-              </p>
-            </div>
-
-            {/* Opções */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900">Escolha uma opção:</h4>
-              
-              {/* Opção 1: Download */}
-              <a
-                href={slide.filePath}
-                download
-                className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg"
-              >
-                <span className="text-2xl">⬇️</span>
-                <div className="flex-1 text-left">
-                  <div className="font-semibold">Baixar PowerPoint</div>
-                  <div className="text-xs opacity-90">Abra no Microsoft PowerPoint ou LibreOffice</div>
-                </div>
-              </a>
-
-              {/* Opção 2: Converter */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">💡</span>
-                  <div className="flex-1">
-                    <div className="font-semibold text-green-900 mb-2">Recomendação: Converter para PDF</div>
-                    <ol className="text-sm text-green-800 space-y-1 list-decimal list-inside">
-                      <li>Abra o PowerPoint no Microsoft PowerPoint</li>
-                      <li>Arquivo → Salvar Como → PDF</li>
-                      <li>Volte e envie o PDF no lugar deste arquivo</li>
-                    </ol>
-                    <div className="mt-3 text-xs text-green-700">
-                      ✅ PDF funciona perfeitamente na apresentação!
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Opção 3: Navegar */}
-              <div className="text-center pt-3 border-t">
-                <p className="text-sm text-gray-600 mb-3">
-                  Ou navegue para outro slide usando as setas ← →
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <button
-                    onClick={prev}
-                    disabled={idx === 0}
-                    className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    ← Anterior
-                  </button>
-                  <button
-                    onClick={next}
-                    disabled={idx === slides.length - 1}
-                    className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Próximo →
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <OfficePowerPointViewer
+          filePath={slide.filePath}
+          slideNumber={idx + 1}
+          isFullscreen={isFullscreen}
+          onNavigate={(direction) => direction === 'prev' ? prev() : next()}
+          canNavigatePrev={idx > 0}
+          canNavigateNext={idx < slides.length - 1}
+        />
       )
     }
     
