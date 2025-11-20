@@ -232,9 +232,18 @@ export default function OfficePowerPointViewer({
   // Produção ou ngrok configurado - mostrar viewer
   return (
     <div className="w-full h-full flex flex-col bg-white">
+      {/* Debug Info - Remover em produção */}
+      <div className="bg-blue-50 border-b-2 border-blue-200 p-3 text-xs space-y-1">
+        <p><strong>🔧 Debug Info:</strong></p>
+        <p>📊 <strong>Arquivo:</strong> {filePath}</p>
+        <p>🌐 <strong>URL Pública:</strong> {publicUrl}</p>
+        <p>🖥️ <strong>Ngrok:</strong> {process.env.NEXT_PUBLIC_NGROK_URL || 'Não configurado'}</p>
+        <p>🔗 <strong>Office Viewer:</strong> <a href={viewerUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Testar URL</a></p>
+      </div>
+      
       <iframe
         src={viewerUrl}
-        className={`w-full ${isFullscreen ? 'h-screen' : 'h-[65vh]'} border-0`}
+        className={`w-full ${isFullscreen ? 'h-screen' : 'h-[60vh]'} border-0`}
         title={`PowerPoint - Slide ${slideNumber}`}
         allowFullScreen
         onError={() => setViewerError(true)}
