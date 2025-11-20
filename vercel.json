@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "api/**/*": {
+      "maxDuration": 60
+    }
+  },
+  "regions": ["gru1"],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
+}

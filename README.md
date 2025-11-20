@@ -18,6 +18,8 @@ UniVoice é uma plataforma educacional inovadora que permite aos professores cri
 - 📝 **Transcrição Completa** - Texto completo da aula disponível
 - 🔐 **Autenticação Segura** - Sistema JWT para professores
 - 📱 **Interface Responsiva** - Design adaptável (em desenvolvimento)
+- 📊 **Suporte a PowerPoint** - Integração com Microsoft Office 365
+- 📄 **Upload Múltiplo** - PDF, imagens, PowerPoint
 
 ---
 
@@ -245,6 +247,47 @@ npx prisma generate
 - [ ] Sistema de comentários
 
 Veja o roadmap completo em: `.trae/documents/ANALISE_COMPLETA_E_ROADMAP.md`
+
+---
+
+## 🚀 Deploy em Produção
+
+### Vercel (Recomendado)
+
+O UniVoice está otimizado para deploy na **Vercel**.
+
+**Guia Completo:** Ver `docs/DEPLOY_GUIDE.md`
+
+**Resumo Rápido:**
+
+```bash
+# 1. Criar repositório no GitHub
+# 2. Push do código
+git remote add origin https://github.com/SEU_USUARIO/univoice.git
+git push -u origin main
+
+# 3. Importar na Vercel
+# - Conectar com GitHub
+# - Importar repositório
+# - Configurar variáveis de ambiente
+
+# 4. Configurar Database (escolher uma):
+# - Vercel Postgres
+# - Supabase (grátis)
+# - Neon (grátis)
+
+# 5. Deploy automático! ✅
+```
+
+**Variáveis de Ambiente Necessárias:**
+```bash
+DATABASE_URL=postgresql://...
+AUTH_SECRET=seu_secret_aqui
+```
+
+**PowerPoint em Produção:**
+- ✅ Office Online funciona automaticamente em domínio público
+- ❌ Não precisa de ngrok/túnel
 
 ---
 
