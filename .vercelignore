@@ -1,0 +1,12 @@
+# Ignorar durante build na Vercel
+.git
+.env.local
+.env*.local
+node_modules
+.next
+.trae
+uploads
+docs/*.md
+README.md
+*.log
+.DS_Store
