@@ -21,16 +21,28 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
 
   async function uploadSingle() {
     if (!file) return
+    
+    // Detectar se é PowerPoint
+    const isPptx = file.name.toLowerCase().endsWith('.pptx') || file.name.toLowerCase().endsWith('.ppt')
+    const endpoint = isPptx ? '/api/materials/upload-pptx' : '/api/materials/upload'
+    
     const fd = new FormData()
     fd.append('lessonId', lessonId)
-    fd.append('type', type)
+    if (!isPptx) {
+      fd.append('type', type)
+    }
     fd.append('file', file)
-    setStatus('Enviando...')
-    const res = await fetch('/api/materials/upload', { method: 'POST', body: fd })
+    setStatus(isPptx ? 'Processando PowerPoint...' : 'Enviando...')
+    
+    const res = await fetch(endpoint, { method: 'POST', body: fd })
     if (res.ok) {
-      setStatus('✅ Enviado com sucesso!')
+      const data = await res.json()
+      setStatus(isPptx ? '✅ PowerPoint importado com sucesso!' : '✅ Enviado com sucesso!')
       setFile(null)
-      setTimeout(() => setStatus(''), 3000)
+      setTimeout(() => {
+        setStatus('')
+        window.location.reload() // Recarregar para ver os slides
+      }, 2000)
     } else {
       setStatus('❌ Erro ao enviar')
     }
@@ -64,14 +76,16 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
     
     // Auto-detectar tipo do arquivo
     if (selectedFile) {
+      const fileName = selectedFile.name.toLowerCase()
       if (selectedFile.type.startsWith('image/')) {
         setType('IMAGE')
       } else if (selectedFile.type === 'application/pdf') {
         setType('PDF')
       } else if (selectedFile.type.startsWith('video/')) {
         setType('VIDEO')
-      } else if (selectedFile.name.endsWith('.pptx') || selectedFile.name.endsWith('.ppt')) {
-        setShowPptxGuide(true)
+      } else if (fileName.endsWith('.pptx') || fileName.endsWith('.ppt')) {
+        setType('PPTX')
+        // Não mostrar mais o guia, já que agora suportamos upload direto
       }
     }
   }
@@ -130,6 +144,7 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
             >
               <option value="IMAGE">🖼️ Imagem (vira slide)</option>
               <option value="PDF">📄 PDF (vira slide)</option>
+              <option value="PPTX">📊 PowerPoint (vira slide)</option>
               <option value="VIDEO">🎥 Vídeo (material apoio)</option>
             </select>
           </div>
@@ -141,12 +156,20 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
             <input 
               type="file" 
               onChange={handleFileChange} 
-              accept={type === 'IMAGE' ? 'image/*' : type === 'PDF' ? '.pdf' : 'video/*'}
+              accept={
+                type === 'IMAGE' ? 'image/*' : 
+                type === 'PDF' ? '.pdf' : 
+                type === 'PPTX' ? '.pptx,.ppt' :
+                'video/*'
+              }
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
             />
             {file && (
               <p className="mt-2 text-sm text-gray-600">
                 📎 {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                {file.name.toLowerCase().endsWith('.pptx') && (
+                  <span className="ml-2 text-orange-600 font-semibold">📊 PowerPoint detectado!</span>
+                )}
               </p>
             )}
           </div>
@@ -231,9 +254,50 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
               <div className="flex-1">
                 <h4 className="font-bold text-xl text-orange-900 mb-3">Como Importar PowerPoint</h4>
                 <p className="text-orange-800 mb-4">
-                  Há <strong>3 formas</strong> de usar seu PowerPoint no UniVoice:
+                  Há <strong>4 formas</strong> de usar seu PowerPoint no UniVoice:
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Opção 0: Upload Direto - NOVO! */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-lg p-5">
+            <div className="flex items-start gap-3 mb-3">
+              <span className="bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm">NOVO! ⭐</span>
+              <h5 className="font-semibold text-lg text-green-900">📊 Upload Direto do PowerPoint</h5>
+            </div>
+            <p className="text-green-800 mb-3 font-semibold">
+              🎉 Agora você pode enviar o arquivo .pptx DIRETO, sem converter!
+            </p>
+            <ol className="space-y-2 text-sm text-gray-700 ml-6">
+              <li className="flex items-start gap-2">
+                <span className="font-bold">1.</span>
+                <span>Volte na aba <strong>"Arquivo Único"</strong></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="font-bold">2.</span>
+                <span>Selecione <strong>"📊 PowerPoint"</strong> no tipo</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="font-bold">3.</span>
+                <span>Escolha seu arquivo <strong>.pptx ou .ppt</strong></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="font-bold">4.</span>
+                <span>Clique em <strong>"Enviar Material"</strong></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="font-bold">5.</span>
+                <span>✅ Pronto! O PowerPoint aparecerá na apresentação!</span>
+              </li>
+            </ol>
+            <div className="mt-3 bg-white border-2 border-green-400 rounded p-3">
+              <p className="text-sm text-green-900 font-semibold">
+                ⚡ <strong>Mais Rápido:</strong> Envie direto sem precisar exportar!
+              </p>
+              <p className="text-xs text-green-800 mt-1">
+                O PowerPoint será visualizado via Microsoft Office Online com todos os seus slides.
+              </p>
             </div>
           </div>
 
@@ -342,8 +406,9 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
       {/* Dicas */}
       {uploadMode !== 'powerpoint' && (
         <div className="text-xs text-gray-500 space-y-1 pt-4 border-t">
-          <p>💡 <strong>Imagens e PDFs</strong> viram slides automaticamente!</p>
-          <p>📊 <strong>Tem PowerPoint?</strong> Clique na aba "PowerPoint" para ver como importar.</p>
+          <p>💡 <strong>Imagens, PDFs e PowerPoint</strong> viram slides automaticamente!</p>
+          <p>📊 <strong>NOVO:</strong> Envie arquivos .pptx direto sem converter!</p>
+          <p>❓ <strong>Dúvidas?</strong> Clique na aba "PowerPoint" para ver todas as opções.</p>
         </div>
       )}
 

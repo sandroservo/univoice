@@ -140,7 +140,37 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
     return filePath.toLowerCase().endsWith('.pdf')
   }
 
+  function isPowerPoint(filePath: string): boolean {
+    const lower = filePath.toLowerCase()
+    return lower.endsWith('.pptx') || lower.endsWith('.ppt')
+  }
+
   function renderSlide(slide: Slide) {
+    // PowerPoint - usar visualizador online
+    if (isPowerPoint(slide.filePath)) {
+      const fullUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}${slide.filePath}`
+        : slide.filePath
+      
+      // Usar Microsoft Office Online Viewer
+      const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}`
+      
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-white">
+          <iframe
+            src={viewerUrl}
+            className={`w-full ${isFullscreen ? 'h-screen' : 'h-[65vh]'} border-0`}
+            title={`Slide ${idx + 1}`}
+            allowFullScreen
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            PowerPoint sendo visualizado via Office Online
+          </p>
+        </div>
+      )
+    }
+    
+    // PDF - visualização direta
     if (isPDF(slide.filePath)) {
       return (
         <iframe
@@ -150,6 +180,8 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
         />
       )
     }
+    
+    // Imagem - visualização direta
     return (
       <img 
         src={slide.filePath} 
@@ -345,7 +377,11 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
                   onClick={() => goToSlide(i)}
                   className={`cursor-pointer rounded-lg p-2 transition ${i === idx ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700 hover:bg-gray-600'}`}
                 >
-                  {isPDF(slide.filePath) ? (
+                  {isPowerPoint(slide.filePath) ? (
+                    <div className="w-full aspect-video bg-orange-100 rounded mb-1 flex items-center justify-center">
+                      <span className="text-4xl">📊</span>
+                    </div>
+                  ) : isPDF(slide.filePath) ? (
                     <div className="w-full aspect-video bg-red-100 rounded mb-1 flex items-center justify-center">
                       <span className="text-4xl">📄</span>
                     </div>
