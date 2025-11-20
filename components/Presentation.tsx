@@ -31,7 +31,7 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
     r.interimResults = true
     let lastStart = now()
     let buffer = ''
-    r.onresult = async e => {
+    r.onresult = async (e: any) => {
       const res = e.results[e.resultIndex]
       const t = res[0].transcript
       if (res.isFinal) {
@@ -86,18 +86,55 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
   useEffect(()=>{ startTs.current = Date.now() },[])
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="flex items-center space-x-2 p-2">
-        {!recording ? <button onClick={start} className="bg-green-600 text-white px-3 py-2 rounded">Iniciar</button> : <button onClick={stop} className="bg-red-600 text-white px-3 py-2 rounded">Parar</button>}
-        <button onClick={prev} className="bg-gray-300 px-3 py-2 rounded">Anterior</button>
-        <button onClick={next} className="bg-gray-300 px-3 py-2 rounded">Próximo</button>
-        <span className="ml-2">Slide {idx+1} de {slides.length}</span>
+    <div className="w-full h-full flex flex-col items-center p-4 space-y-4">
+      {/* Controles de Apresentação */}
+      <div className="flex items-center justify-center space-x-3 bg-white p-4 rounded-lg shadow-md w-full max-w-5xl">
+        {!recording ? (
+          <button onClick={start} className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition">
+            ▶ Iniciar Gravação
+          </button>
+        ) : (
+          <button onClick={stop} className="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition animate-pulse">
+            ⏹ Parar Gravação
+          </button>
+        )}
+        <div className="border-l border-gray-300 h-10"></div>
+        <button onClick={prev} className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+          ← Anterior
+        </button>
+        <span className="font-semibold text-gray-700">
+          Slide {idx+1} de {slides.length}
+        </span>
+        <button onClick={next} className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+          Próximo →
+        </button>
       </div>
-      <div className="w-full max-w-5xl p-4 bg-gray-100 rounded text-sm min-h-[6rem]">
-        <div className="text-gray-700">{transcript} <span className="text-gray-400">{interim}</span></div>
+
+      {/* Área do Slide */}
+      <div className="flex-1 w-full max-w-5xl bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-lg p-6 flex items-center justify-center">
+        {slides[idx] ? (
+          <img src={slides[idx].filePath} alt={`Slide ${idx + 1}`} className="max-h-[60vh] max-w-full object-contain rounded shadow-md" />
+        ) : (
+          <div className="text-gray-400 text-center">
+            <p className="text-xl mb-2">📊</p>
+            <p>Nenhum slide disponível</p>
+          </div>
+        )}
       </div>
-      <div className="flex-1 w-full max-w-5xl bg-black/5 rounded p-4">
-        {slides[idx] ? <img src={slides[idx].filePath} alt="slide" className="mx-auto max-h-[70vh]" /> : null}
+
+      {/* Área de Transcrição */}
+      <div className="w-full max-w-5xl bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center mb-3">
+          <span className="text-lg font-semibold text-gray-800">
+            {recording ? '🔴 Gravando...' : '📝 Transcrição'}
+          </span>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-4 min-h-[8rem] max-h-[12rem] overflow-y-auto">
+          <div className="text-gray-700 leading-relaxed">
+            {transcript || <span className="text-gray-400 italic">A transcrição aparecerá aqui em tempo real...</span>}
+            {interim && <span className="text-blue-500 italic"> {interim}</span>}
+          </div>
+        </div>
       </div>
     </div>
   )
