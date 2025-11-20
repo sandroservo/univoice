@@ -28,11 +28,19 @@ export default function OfficePowerPointViewer({
   const [showAlternatives, setShowAlternatives] = useState(false)
   const [viewerError, setViewerError] = useState(false)
   const [showTunnelGuide, setShowTunnelGuide] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  const [isLocal, setIsLocal] = useState(false)
   
-  const isLocal = isLocalhost()
-  const publicUrl = getPublicFileUrl(filePath)
-  const viewerUrl = getOfficeViewerUrl(publicUrl)
   const alternatives = getOfficeAlternatives()
+  
+  // Executar apenas no cliente para evitar erro de hidratação
+  useEffect(() => {
+    setIsClient(true)
+    setIsLocal(isLocalhost())
+  }, [])
+  
+  const publicUrl = isClient ? getPublicFileUrl(filePath) : filePath
+  const viewerUrl = getOfficeViewerUrl(publicUrl)
   
   useEffect(() => {
     // Detectar erro de carregamento do iframe
@@ -45,6 +53,18 @@ export default function OfficePowerPointViewer({
     
     return () => clearTimeout(timer)
   }, [isLocal])
+
+  // Aguardar hidratação do cliente
+  if (!isClient) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="text-6xl mb-4">📊</div>
+          <p className="text-gray-600">Carregando PowerPoint...</p>
+        </div>
+      </div>
+    )
+  }
 
   // Ambiente de desenvolvimento local - mostrar aviso
   if (isLocal && !process.env.NEXT_PUBLIC_NGROK_URL) {
