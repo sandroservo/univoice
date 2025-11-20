@@ -8,6 +8,7 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
   const [status, setStatus] = useState('')
   const [uploadMode, setUploadMode] = useState<'single' | 'multiple' | 'powerpoint'>('single')
   const [showPptxGuide, setShowPptxGuide] = useState(false)
+  const [uploadCount, setUploadCount] = useState(0)
   
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,12 +38,18 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
     const res = await fetch(endpoint, { method: 'POST', body: fd })
     if (res.ok) {
       const data = await res.json()
-      setStatus(isPptx ? '✅ PowerPoint importado com sucesso!' : '✅ Enviado com sucesso!')
+      setUploadCount(prev => prev + 1)
+      if (isPptx) {
+        setStatus('✅ PowerPoint importado! Clique em "Ir para Modo Apresentação" para ver.')
+      } else {
+        setStatus('✅ Enviado com sucesso!')
+      }
       setFile(null)
-      setTimeout(() => {
-        setStatus('')
-        window.location.reload() // Recarregar para ver os slides
-      }, 2000)
+      // Limpar input de arquivo
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+      if (fileInput) fileInput.value = ''
+      
+      setTimeout(() => setStatus(''), 8000)
     } else {
       setStatus('❌ Erro ao enviar')
     }
@@ -66,8 +73,12 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
     }
     
     setStatus(`✅ ${success}/${files.length} slides enviados!`)
+    setUploadCount(prev => prev + success)
     setFiles(null)
-    setTimeout(() => setStatus(''), 5000)
+    // Limpar input
+    const fileInput = document.querySelectorAll('input[type="file"]')[1] as HTMLInputElement
+    if (fileInput) fileInput.value = ''
+    setTimeout(() => setStatus(''), 8000)
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,7 +108,22 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800">📤 Enviar Material</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-800">📤 Enviar Material</h3>
+        {uploadCount > 0 && (
+          <div className="flex items-center gap-3">
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+              ✅ {uploadCount} {uploadCount === 1 ? 'material enviado' : 'materiais enviados'}
+            </span>
+            <a 
+              href={`/apresentacao/${lessonId}`}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition shadow-lg animate-pulse"
+            >
+              🎯 Ver Apresentação
+            </a>
+          </div>
+        )}
+      </div>
       
       {/* Modo de Upload */}
       <div className="flex gap-2 bg-gray-100 p-2 rounded-lg">
