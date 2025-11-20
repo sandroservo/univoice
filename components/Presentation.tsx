@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from 'react'
 import OfficePowerPointViewer from './OfficePowerPointViewer'
-import PPTXLocalViewer from './PPTXLocalViewer'
 
 type Slide = { id: string, filePath: string, order: number }
 
@@ -148,11 +147,10 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
   }
 
   function renderSlide(slide: Slide) {
-    // PowerPoint - usar renderização local no navegador (pptxjs)
-    // Funciona em localhost sem precisar de ngrok!
+    // PowerPoint - mostrar opções ao usuário
     if (isPowerPoint(slide.filePath)) {
       return (
-        <PPTXLocalViewer
+        <OfficePowerPointViewer
           filePath={slide.filePath}
           slideNumber={idx + 1}
           isFullscreen={isFullscreen}
