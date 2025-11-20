@@ -1,13 +1,5 @@
 {
   "buildCommand": "prisma generate && next build",
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 60
-    },
-    "app/**/*.ts": {
-      "maxDuration": 60
-    }
-  },
   "regions": ["gru1"],
   "headers": [
     {
