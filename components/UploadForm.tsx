@@ -287,14 +287,26 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
           </div>
 
           {/* Opção 0: Upload Direto - NOVO! */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-lg p-5">
+          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-400 rounded-lg p-5">
             <div className="flex items-start gap-3 mb-3">
-              <span className="bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm">NOVO! ⭐</span>
-              <h5 className="font-semibold text-lg text-green-900">📊 Upload Direto do PowerPoint</h5>
+              <span className="bg-yellow-500 text-white font-bold px-3 py-1 rounded-full text-sm">INFO ⚠️</span>
+              <h5 className="font-semibold text-lg text-orange-900">📊 Upload Direto do PowerPoint</h5>
             </div>
-            <p className="text-green-800 mb-3 font-semibold">
-              🎉 Agora você pode enviar o arquivo .pptx DIRETO, sem converter!
+            <p className="text-orange-800 mb-3 font-semibold">
+              Você pode enviar o arquivo .pptx DIRETO, mas há limitações em localhost:
             </p>
+            
+            <div className="bg-white border-2 border-orange-300 rounded p-3 mb-3">
+              <p className="text-sm text-orange-900 mb-2">
+                ⚠️ <strong>Importante:</strong>
+              </p>
+              <ul className="text-xs text-orange-800 space-y-1 list-disc list-inside">
+                <li>Em <strong>localhost</strong> (desenvolvimento): Arquivo será salvo mas não visualizado</li>
+                <li>Em <strong>produção</strong> (domínio público): Funciona perfeitamente via Office Online</li>
+                <li><strong>Recomendado para localhost:</strong> Converter para PDF primeiro</li>
+              </ul>
+            </div>
+
             <ol className="space-y-2 text-sm text-gray-700 ml-6">
               <li className="flex items-start gap-2">
                 <span className="font-bold">1.</span>
@@ -314,24 +326,16 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-bold">5.</span>
-                <span>✅ Pronto! O PowerPoint aparecerá na apresentação!</span>
+                <span>O arquivo será salvo (mas pode pedir conversão para PDF)</span>
               </li>
             </ol>
-            <div className="mt-3 bg-white border-2 border-green-400 rounded p-3">
-              <p className="text-sm text-green-900 font-semibold">
-                ⚡ <strong>Mais Rápido:</strong> Envie direto sem precisar exportar!
-              </p>
-              <p className="text-xs text-green-800 mt-1">
-                O PowerPoint será visualizado via Microsoft Office Online com todos os seus slides.
-              </p>
-            </div>
           </div>
 
           {/* Opção 1: PDF */}
-          <div className="bg-white border-2 border-gray-200 rounded-lg p-5">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-lg p-5">
             <div className="flex items-start gap-3 mb-3">
-              <span className="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full text-sm">Opção 1</span>
-              <h5 className="font-semibold text-lg">📄 Exportar como PDF (Mais Fácil)</h5>
+              <span className="bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm">⭐ RECOMENDADO</span>
+              <h5 className="font-semibold text-lg text-green-900">📄 Exportar como PDF</h5>
             </div>
             <ol className="space-y-2 text-sm text-gray-700 ml-6">
               <li className="flex items-start gap-2">
@@ -347,17 +351,23 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
                 <span>Volte aqui e envie o PDF no modo <strong>"Arquivo Único"</strong></span>
               </li>
             </ol>
-            <div className="mt-3 bg-green-50 border border-green-200 rounded p-3">
-              <p className="text-sm text-green-800">
-                ✅ <strong>Recomendado:</strong> Rápido, mantém formatação, funciona perfeitamente!
+            <div className="mt-3 bg-white border-2 border-green-400 rounded p-3">
+              <p className="text-sm text-green-900 font-semibold mb-2">
+                ✅ <strong>Melhor Opção para Localhost!</strong>
               </p>
+              <ul className="text-xs text-green-800 space-y-1 list-disc list-inside">
+                <li>Rápido e fácil</li>
+                <li>Mantém toda a formatação</li>
+                <li>Funciona perfeitamente em desenvolvimento e produção</li>
+                <li>Visualização direta no navegador</li>
+              </ul>
             </div>
           </div>
 
           {/* Opção 2: Imagens */}
           <div className="bg-white border-2 border-gray-200 rounded-lg p-5">
             <div className="flex items-start gap-3 mb-3">
-              <span className="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-sm">Opção 2</span>
+              <span className="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-sm">Alternativa</span>
               <h5 className="font-semibold text-lg">🖼️ Exportar como Imagens</h5>
             </div>
             <ol className="space-y-2 text-sm text-gray-700 ml-6">
@@ -388,7 +398,7 @@ export default function UploadForm({ lessonId }: { lessonId: string }) {
           {/* Opção 3: Google Slides */}
           <div className="bg-white border-2 border-gray-200 rounded-lg p-5">
             <div className="flex items-start gap-3 mb-3">
-              <span className="bg-yellow-100 text-yellow-800 font-bold px-3 py-1 rounded-full text-sm">Opção 3</span>
+              <span className="bg-yellow-100 text-yellow-800 font-bold px-3 py-1 rounded-full text-sm">Alternativa</span>
               <h5 className="font-semibold text-lg">☁️ Via Google Slides</h5>
             </div>
             <ol className="space-y-2 text-sm text-gray-700 ml-6">
