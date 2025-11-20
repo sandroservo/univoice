@@ -7,9 +7,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  PROFESSOR
-  ALUNO
+model Course {
+  id      String   @id @default(cuid())
+  name    String
+  ownerId String
+  User    User     @relation(fields: [ownerId], references: [id])
+  Lesson  Lesson[]
+}
+
+model Lesson {
+  id                String              @id @default(cuid())
+  title             String
+  courseId          String?
+  createdAt         DateTime            @default(now())
+  audioPath         String?
+  Course            Course?             @relation(fields: [courseId], references: [id])
+  Material          Material[]
+  Slide             Slide[]
+  TranscriptSegment TranscriptSegment[]
+}
+
+model Material {
+  id        String       @id @default(cuid())
+  lessonId  String
+  type      MaterialType
+  filePath  String
+  createdAt DateTime     @default(now())
+  Lesson    Lesson       @relation(fields: [lessonId], references: [id])
+}
+
+model Slide {
+  id       String @id @default(cuid())
+  lessonId String
+  order    Int
+  filePath String
+  Lesson   Lesson @relation(fields: [lessonId], references: [id])
+}
+
+model TranscriptSegment {
+  id         String @id @default(cuid())
+  lessonId   String
+  text       String
+  startTime  Float
+  endTime    Float
+  slideIndex Int?
+  Lesson     Lesson @relation(fields: [lessonId], references: [id])
 }
 
 model User {
@@ -20,35 +62,7 @@ model User {
   passwordHash String
   passwordSalt String
   createdAt    DateTime @default(now())
-  courses      Course[]
-}
-
-model Course {
-  id        String  @id @default(cuid())
-  name      String
-  ownerId   String
-  owner     User    @relation(fields: [ownerId], references: [id])
-  lessons   Lesson[]
-}
-
-model Lesson {
-  id         String   @id @default(cuid())
-  title      String
-  courseId   String?
-  course     Course?  @relation(fields: [courseId], references: [id])
-  createdAt  DateTime @default(now())
-  audioPath  String?
-  slides     Slide[]
-  materials  Material[]
-  segments   TranscriptSegment[]
-}
-
-model Slide {
-  id        String @id @default(cuid())
-  lessonId  String
-  lesson    Lesson @relation(fields: [lessonId], references: [id])
-  order     Int
-  filePath  String
+  Course       Course[]
 }
 
 enum MaterialType {
@@ -57,21 +71,7 @@ enum MaterialType {
   VIDEO
 }
 
-model Material {
-  id        String       @id @default(cuid())
-  lessonId  String
-  lesson    Lesson       @relation(fields: [lessonId], references: [id])
-  type      MaterialType
-  filePath  String
-  createdAt DateTime     @default(now())
-}
-
-model TranscriptSegment {
-  id         String   @id @default(cuid())
-  lessonId   String
-  lesson     Lesson   @relation(fields: [lessonId], references: [id])
-  text       String
-  startTime  Float
-  endTime    Float
-  slideIndex Int?
+enum Role {
+  PROFESSOR
+  ALUNO
 }

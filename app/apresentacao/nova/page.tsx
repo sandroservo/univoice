@@ -8,10 +8,26 @@ export default function NovaApresentacao() {
   const [created, setCreated] = useState(false)
 
   async function createLesson() {
-    const res = await fetch('/api/lessons/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title }) })
-    const data = await res.json()
-    setLessonId(data.lesson.id)
-    setCreated(true)
+    try {
+      const res = await fetch('/api/lessons/create', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ title }) 
+      })
+      
+      if (!res.ok) {
+        const error = await res.json()
+        alert(`Erro: ${error.error || 'Não foi possível criar a aula'}`)
+        return
+      }
+      
+      const data = await res.json()
+      setLessonId(data.lesson.id)
+      setCreated(true)
+    } catch (error) {
+      console.error('Erro ao criar aula:', error)
+      alert('Erro ao criar aula. Verifique a conexão com o servidor.')
+    }
   }
 
   return (
