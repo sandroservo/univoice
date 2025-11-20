@@ -90,8 +90,8 @@ http://localhost:3000/api/auth/seed
 ```
 
 Isso criará um professor demo com as credenciais:
-- **Email:** `professor@demo.com`
-- **Senha:** `demo123`
+- **Email:** `prof@demo.com`
+- **Senha:** `senha123`
 
 7. **Inicie o servidor de desenvolvimento**
 ```bash
@@ -111,7 +111,7 @@ http://localhost:3000
 
 1. **Login**
    - Acesse `/login`
-   - Use as credenciais: `professor@demo.com` / `demo123`
+   - Use as credenciais: `prof@demo.com` / `senha123`
 
 2. **Criar Nova Apresentação**
    - No dashboard, clique em "Nova Apresentação"
