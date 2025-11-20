@@ -36,7 +36,7 @@ export default function StudentPage({ params }: { params: { lessonId: string } }
       <h1 className="text-xl font-semibold">Replay da Aula</h1>
       {audioPath && <audio ref={audioRef} src={audioPath} controls onTimeUpdate={onTimeUpdate} className="w-full" />}
       <div className="bg-black/5 p-4 rounded min-h-[400px] flex items-center justify-center">
-        {slides[currentSlide] && <img src={slides[currentSlide].filePath.replace(process.cwd(), '')} className="max-h-[60vh]" />}
+        {slides[currentSlide] && <img src={slides[currentSlide].filePath} alt={`Slide ${currentSlide + 1}`} className="max-h-[60vh]" />}
       </div>
       <div className="bg-white p-4 rounded shadow">
         <h2 className="font-medium">Transcrição</h2>
