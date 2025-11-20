@@ -136,6 +136,29 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
+  function isPDF(filePath: string): boolean {
+    return filePath.toLowerCase().endsWith('.pdf')
+  }
+
+  function renderSlide(slide: Slide) {
+    if (isPDF(slide.filePath)) {
+      return (
+        <iframe
+          src={slide.filePath}
+          className={`w-full bg-white ${isFullscreen ? 'h-screen' : 'h-[65vh]'} rounded`}
+          title={`Slide ${idx + 1}`}
+        />
+      )
+    }
+    return (
+      <img 
+        src={slide.filePath} 
+        alt={`Slide ${idx + 1}`} 
+        className={`max-w-full ${isFullscreen ? 'max-h-screen' : 'max-h-[65vh]'} object-contain`} 
+      />
+    )
+  }
+
   // Atalhos de teclado (estilo PowerPoint)
   useEffect(() => {
     function handleKeyboard(e: KeyboardEvent) {
@@ -322,7 +345,13 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
                   onClick={() => goToSlide(i)}
                   className={`cursor-pointer rounded-lg p-2 transition ${i === idx ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700 hover:bg-gray-600'}`}
                 >
-                  <img src={slide.filePath} alt={`Slide ${i + 1}`} className="w-full rounded mb-1" />
+                  {isPDF(slide.filePath) ? (
+                    <div className="w-full aspect-video bg-red-100 rounded mb-1 flex items-center justify-center">
+                      <span className="text-4xl">📄</span>
+                    </div>
+                  ) : (
+                    <img src={slide.filePath} alt={`Slide ${i + 1}`} className="w-full rounded mb-1" />
+                  )}
                   <p className="text-white text-xs text-center">{i + 1}</p>
                 </div>
               ))}
@@ -341,7 +370,7 @@ export default function Presentation({ lessonId, slides }: { lessonId: string, s
               <p className="text-gray-400 text-sm">Tela branca (pressione W para voltar)</p>
             </div>
           ) : slides[idx] ? (
-            <img src={slides[idx].filePath} alt={`Slide ${idx + 1}`} className={`max-w-full ${isFullscreen ? 'max-h-screen' : 'max-h-[65vh]'} object-contain`} />
+            renderSlide(slides[idx])
           ) : (
             <div className="text-gray-400 text-center">
               <p className="text-4xl mb-4">📊</p>

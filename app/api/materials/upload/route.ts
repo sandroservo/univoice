@@ -16,9 +16,12 @@ export async function POST(req: Request) {
   writeFileSync(fp, array)
   const url = `/api/uploads/materials/${lessonId}/${filename}`
   const mat = await prisma.material.create({ data: { lessonId, type: type as any, filePath: url } })
-  if (type === 'IMAGE') {
+  
+  // Criar slides para IMAGENS e PDFs
+  if (type === 'IMAGE' || type === 'PDF') {
     const count = await prisma.slide.count({ where: { lessonId } })
     await prisma.slide.create({ data: { lessonId, order: count + 1, filePath: url } })
   }
+  
   return Response.json({ material: mat })
 }
